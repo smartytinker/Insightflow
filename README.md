@@ -35,7 +35,7 @@ Most “analytics dashboards” stop at static charts. InsightFlow demonstrates 
 - **Safe AI** — the LLM receives compact calculated facts and summaries, never the full dataset. It never executes generated SQL or Python.
 - **Auditable cleaning** — cleaning always starts from the original upload, writes a separate copy, and records every operation.
 - **Real persistence** — datasets, cleaning history, analyses, anomaly runs and conversations live in PostgreSQL (or SQLite for local development) with migrations.
-- **Testable architecture** — thin routes, a service layer, repositories, typed schemas, and 84 hermetic tests that require no paid API.
+- **Testable architecture** — thin routes, a service layer, repositories, typed schemas, and 91 hermetic tests that require no paid API.
 
 The result is a small, inspectable analytics product rather than a prototype.
 
@@ -191,7 +191,7 @@ insightflow/
 │   │   ├── db/                      # Engine, session, declarative base
 │   │   └── utils/                   # Validation, serialization
 │   ├── migrations/                  # Alembic environment and revisions
-│   ├── tests/                       # 84 tests
+│   ├── tests/                       # 91 tests
 │   ├── alembic.ini
 │   ├── entrypoint.sh
 │   ├── Dockerfile
@@ -265,7 +265,7 @@ cd backend
 uvicorn app.main:app --reload --port 8000
 ```
 
-SQLite schema creation is automatic at startup. For PostgreSQL, run migrations instead (see below).
+SQLite schema creation is automatic at startup, and relative SQLite paths resolve against the repository root regardless of the directory Uvicorn is started from. For PostgreSQL, run migrations instead (see below).
 
 Start the frontend in a second terminal:
 
@@ -295,7 +295,7 @@ Copy `.env.example` to `.env`. Never commit `.env`.
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `DATABASE_URL` | `sqlite:///storage/insightflow.db` | SQLAlchemy URL. Use `postgresql+psycopg://...` for PostgreSQL. |
+| `DATABASE_URL` | `sqlite:///storage/insightflow.db` | SQLAlchemy URL. Relative SQLite paths are anchored to the repository root. Use `postgresql+psycopg://...` for PostgreSQL. |
 | `ENVIRONMENT` | `development` | Environment label. |
 | `DEBUG` | `false` | Debug flag (stack traces are still never returned by handlers). |
 | `LOG_LEVEL` | `INFO` | Python logging level. |
@@ -455,7 +455,7 @@ The suite runs against a temporary SQLite database and temporary storage directo
 - LLM/assistant: missing credentials, timeouts, rate limits, auth failures, mocked completions, prompt grounding and deterministic fallback.
 - Question engine: group rankings, aggregation aliases, counts, correlations, trends, summaries, unanswerable questions.
 
-Current status: **84 passing tests**, Ruff clean.
+Current status: **91 passing tests**, Ruff clean.
 
 ---
 

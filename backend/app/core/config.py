@@ -7,9 +7,35 @@ from pathlib import Path
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from sqlalchemy.engine import make_url
 
 # Repository root: <repo>/backend/app/core/config.py -> parents[3]
 REPO_ROOT = Path(__file__).resolve().parents[3]
+
+
+def normalize_sqlite_url(value: str) -> str:
+    """Anchor relative SQLite paths to the repository root.
+
+    ``sqlite:///storage/insightflow.db`` is resolved against the current
+    working directory by SQLAlchemy, which breaks when the backend is started
+    from ``backend/``. Normalizing here makes local runs independent of CWD.
+    """
+    if not value.lower().startswith("sqlite"):
+        return value
+    try:
+        url = make_url(value)
+    except Exception:
+        return value
+    if url.get_backend_name() != "sqlite":
+        return value
+    database = url.database
+    if not database or database == ":memory:":
+        return value
+    path = Path(database).expanduser()
+    if path.is_absolute():
+        return value
+    resolved = (REPO_ROOT / path).resolve()
+    return url.set(database=str(resolved)).render_as_string(hide_password=False)
 
 
 class Settings(BaseSettings):
@@ -68,6 +94,11 @@ class Settings(BaseSettings):
         path = Path(value).expanduser()
         return path if path.is_absolute() else (REPO_ROOT / path).resolve()
 
+    @field_validator("database_url")
+    @classmethod
+    def _normalize_database_url(cls, value: str) -> str:
+        return normalize_sqlite_url(value)
+
     @property
     def uploads_path(self) -> Path:
         """Directory where original uploads are stored."""
@@ -93,9 +124,13 @@ class Settings(BaseSettings):
         return bool(self.llm_api_key and self.llm_base_url and self.llm_model)
 
     def ensure_directories(self) -> None:
-        """Create storage directories if they do not exist."""
+        """Create storage directories and the SQLite database directory."""
         for path in (self.storage_dir, self.uploads_path, self.processed_path):
             path.mkdir(parents=True, exist_ok=True)
+        if self.database_url.startswith("sqlite"):
+            database = make_url(self.database_url).database
+            if database and database != ":memory:":
+                Path(database).expanduser().parent.mkdir(parents=True, exist_ok=True)
 
 
 @lru_cache(maxsize=1)
