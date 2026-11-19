@@ -323,7 +323,7 @@ Response `201 Created` includes:
 }
 ```
 
-`row_number` is the CSV row position including the header (so it can be traced back to the uploaded file). The first 2,000 anomalies are stored; `anomalies_truncated` reports when more were found.
+`row_number` is the CSV row position including the header within the **active dataset version** (the cleaned copy when one exists; otherwise the original upload). The first 2,000 anomalies are stored; `anomalies_truncated` reports when more were found.
 
 ### `GET /api/v1/datasets/{dataset_id}/anomalies`
 
@@ -400,7 +400,7 @@ Column-level quality export: dtype, missing count/percentage, unique count.
 
 ### `GET /api/v1/datasets/{dataset_id}/report/anomalies.csv`
 
-Downloads stored anomaly records with `row_number`, `anomaly_score`, `rank` and all original columns. Returns `400 validation_error` when no anomaly run exists.
+Downloads stored anomaly records with `row_number`, `anomaly_score`, `rank` and all columns from the active dataset. Returns `400 validation_error` when no anomaly run exists.
 
 ---
 

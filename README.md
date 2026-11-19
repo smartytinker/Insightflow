@@ -4,6 +4,8 @@
 
 InsightFlow is a complete, locally runnable application: a FastAPI + PostgreSQL backend, a pandas/scikit-learn analytics engine, a provider-agnostic LLM integration, and a polished Streamlit dashboard that consumes only the REST API.
 
+> **New to AI/ML or this codebase?** Read [InsightFlow: The Complete Beginner's Guide](docs/PROJECT_EXPLAINED.md). It explains every concept used here — from CSV and HTTP to pandas, Isolation Forest, LLM grounding, Docker and testing.
+
 ---
 
 ## Table of contents
@@ -23,7 +25,8 @@ InsightFlow is a complete, locally runnable application: a FastAPI + PostgreSQL 
 13. [How the AI assistant is grounded](#how-the-ai-assistant-is-grounded)
 14. [Engineering decisions](#engineering-decisions)
 15. [Screenshots](#screenshots)
-16. [Limitations and future improvements](#limitations-and-future-improvements)
+16. [Beginner's guide](docs/PROJECT_EXPLAINED.md)
+17. [Limitations and future improvements](#limitations-and-future-improvements)
 
 ---
 
@@ -211,6 +214,7 @@ insightflow/
 ├── docs/
 │   ├── architecture.md
 │   ├── api.md
+│   ├── PROJECT_EXPLAINED.md
 │   └── screenshots/
 ├── docker-compose.yml
 ├── .env.example
