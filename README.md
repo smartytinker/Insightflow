@@ -236,6 +236,14 @@ docker compose up --build
 
 The backend container waits for PostgreSQL, applies Alembic migrations via `entrypoint.sh`, then starts Uvicorn. Uploaded files persist in a named volume.
 
+If ports 8000/8501 are already in use, override them and keep the browser-facing URL in sync:
+
+```bash
+BACKEND_PORT=8010 FRONTEND_PORT=8502 \
+PUBLIC_API_BASE_URL=http://localhost:8010 \
+docker compose up --build
+```
+
 ### Option B — Local Python with SQLite
 
 ```bash
@@ -307,6 +315,8 @@ Copy `.env.example` to `.env`. Never commit `.env`.
 | `ANOMALY_RANDOM_STATE` | `42` | Reproducible model seed. |
 | `API_BASE_URL` | `http://localhost:8000` | Frontend → backend URL. |
 | `PUBLIC_API_BASE_URL` | same as API_BASE_URL | Browser-facing URL used for download links (important in Docker). |
+| `BACKEND_PORT` | `8000` | Host port mapped to the backend container. |
+| `FRONTEND_PORT` | `8501` | Host port mapped to the frontend container. |
 
 Supported LLM providers are anything exposing an OpenAI-compatible `/chat/completions` endpoint (OpenAI, Azure-compatible gateways, local servers, etc.).
 
