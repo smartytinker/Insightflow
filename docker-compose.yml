@@ -64,6 +64,8 @@ services:
         condition: service_healthy
     ports:
       - "8501:8501"
+    volumes:
+      - ./sample_data:/app/sample_data:ro
 
 volumes:
   postgres_data:

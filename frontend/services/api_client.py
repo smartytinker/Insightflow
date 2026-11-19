@@ -220,5 +220,13 @@ class InsightFlowClient:
 
     def load_sample(self, name: str) -> bytes:
         """Read a bundled sample file (frontend-local convenience)."""
-        path = Path(__file__).resolve().parents[2] / "sample_data" / name
-        return path.read_bytes()
+        candidates = [
+            Path(os.getenv("SAMPLE_DATA_DIR", "")) if os.getenv("SAMPLE_DATA_DIR") else None,
+            Path(__file__).resolve().parents[2] / "sample_data" / name,
+            Path.cwd() / "sample_data" / name,
+            Path("/app/sample_data") / name,
+        ]
+        for candidate in candidates:
+            if candidate and candidate.is_file():
+                return candidate.read_bytes()
+        raise FileNotFoundError("Bundled sample data is not available in this deployment.")

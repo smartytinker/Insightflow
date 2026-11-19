@@ -95,7 +95,13 @@ with sample_col, st.container(border=True):
             content = client.load_sample(sample_choice)
             with st.spinner("Uploading sample dataset…"):
                 result = client.upload_dataset(sample_choice, content)
-        except (ApiError, OSError) as error:
+        except FileNotFoundError:
+            st.warning(
+                "Bundled sample data is not available in this deployment. "
+                "Upload a CSV file instead.",
+                icon="📂",
+            )
+        except ApiError as error:
             show_api_error(error)
         else:
             st.session_state["dataset_id"] = result["dataset"]["id"]
