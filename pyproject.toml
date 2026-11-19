@@ -1,0 +1,24 @@
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = [
+    ".venv",
+    "storage",
+    "backend/migrations/versions",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+ignore = [
+    "E501",  # handled by the formatter; long UI strings are acceptable
+    "B008",  # FastAPI Depends() in defaults is the documented pattern
+    "B904",  # exception chaining handled explicitly where it matters
+    "UP037",  # quoted forward references keep SQLAlchemy model imports cycle-safe
+]
+
+[tool.ruff.lint.per-file-ignores]
+"backend/tests/**" = ["SIM117", "B011"]
+"backend/app/models/**" = ["E402"]  # deliberate end-of-module imports avoid cycles
+
+[tool.ruff.format]
+quote-style = "double"
